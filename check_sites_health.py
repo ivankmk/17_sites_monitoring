@@ -11,38 +11,44 @@ def load_urls4check(path):
 
 def is_server_respond_with_200(url):
     try:
-        if requests.request('GET', url).ok:
-            return 'Yes'
+        if requests.request('GET', url).status_code == requests.codes['ok']:
+            return True
         else:
-            return 'No'
+            return False
     except requests.exceptions.ConnectionError:
-        return 'Site not exist'
+        return None
 
 
-def check_domain_expiration_date(domain_name):
-    month_ahead = datetime.now() + timedelta(weeks=4)
+def check_domain_expiration_date(domain_name, day_number):
+    month_ahead = datetime.now() + timedelta(days=day_number)
     date = whois.whois(domain_name).expiration_date
     if date is None:
-        return 'No data'
-    if type(date) == list:
+        return None
+    elif type(date) == list:
         if date[0] > month_ahead:
-            return 'Yes'
+            return True
     else:
         if date <= month_ahead:
-            return 'No'
+            return False
 
 
 if __name__ == '__main__':
     try:
-        file_with_sites = sys.argv[1]
-        list_with_sites = load_urls4check(file_with_sites)
-        for site in list_with_sites:
+        file_with_domains = sys.argv[1]
+        list_with_domains = load_urls4check(file_with_domains)
+        for domain in list_with_domains:
             print('-'*40)
-            print('Web site: {}'.format(site))
-            print('Is server return status 200 ?: {}'
-                  .format(is_server_respond_with_200(site)))
-            print('If domain prepaid for the next month?: {}'
-                  .format(check_domain_expiration_date(site)))
+            print('Web site: {}'.format(domain))
+            respond_check = is_server_respond_with_200(domain)
+            if respond_check is True:
+                print('Is server return status 200 ?: Yes')
+            elif respond_check in (False, None):
+                print('Is server return status 200 ?: No')
+            expiration_check = check_domain_expiration_date(domain, 30)
+            if expiration_check is True:
+                print('If domain prepaid for the next month?: Yes')
+            elif expiration_check in (False, None):
+                print('If domain prepaid for the next month?: No')
         print('\n')
     except (FileNotFoundError, IndexError):
         print('Please specify or check your file with sites')
