@@ -19,34 +19,30 @@ def is_server_respond_with_200(url):
         return 'Site not exist'
 
 
-def get_domain_expiration_date(domain_name):
-    try:
-        date = whois.whois(domain_name).expiration_date
-        if type(date) == list:
-            return date[0]
-        else:
-            return date
-    except whois.socket.gaierror:
-        return None
+def check_domain_expiration_date(domain_name):
+    month_ahead = datetime.now() + timedelta(weeks=4)
+    date = whois.whois(domain_name).expiration_date
+    if date is None:
+        return 'No data'
+    if type(date) == list:
+        if date[0] > month_ahead:
+            return 'Yes'
+    else:
+        if date <= month_ahead:
+            return 'No'
 
 
 if __name__ == '__main__':
     try:
         file_with_sites = sys.argv[1]
-        month_ahead = datetime.now() + timedelta(weeks=4)
         list_with_sites = load_urls4check(file_with_sites)
         for site in list_with_sites:
-            expiration_date = get_domain_expiration_date(site)
             print('-'*40)
             print('Web site: {}'.format(site))
             print('Is server return status 200 ?: {}'
                   .format(is_server_respond_with_200(site)))
-            if expiration_date is None:
-                print('If domain prepaid for the next month?: Site not exist')
-            elif expiration_date > month_ahead:
-                print('If domain prepaid for the next month?: Yes')
-            elif expiration_date <= month_ahead:
-                print('If domain prepaid for the next month?: No')
+            print('If domain prepaid for the next month?: {}'
+                  .format(check_domain_expiration_date(site)))
         print('\n')
     except (FileNotFoundError, IndexError):
         print('Please specify or check your file with sites')
