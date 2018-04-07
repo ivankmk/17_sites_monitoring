@@ -11,7 +11,7 @@ def load_urls4check(path):
 
 def is_server_respond_with_200(url):
     try:
-        if requests.request('GET', url).status_code == 200:
+        if requests.request('GET', url).ok:
             return 'Yes'
         else:
             return 'No'
