@@ -32,7 +32,7 @@ def check_domain_expiration_date(domain_name, day_number):
             return False
 
 
-def print_to_console(domain):
+def print_to_console(domain, cnt_days):
     print('-'*40)
     print('Web site: {}'.format(domain))
     respond_check = is_server_respond_with_200(domain)
@@ -53,7 +53,7 @@ if __name__ == '__main__':
         list_with_domains = load_urls4check(file_with_domains)
         cnt_days = 30
         for domain in list_with_domains:
-            print_to_console(domain)
+            print_to_console(domain, cnt_days)
         print('\n')
     except (FileNotFoundError, IndexError):
         print('Please specify or check your file with sites')
