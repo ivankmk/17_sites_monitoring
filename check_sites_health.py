@@ -32,23 +32,28 @@ def check_domain_expiration_date(domain_name, day_number):
             return False
 
 
+def print_to_console(domain):
+    print('-'*40)
+    print('Web site: {}'.format(domain))
+    respond_check = is_server_respond_with_200(domain)
+    if respond_check is True:
+        print('Is server return status 200 ?: Yes')
+    elif respond_check in (False, None):
+        print('Is server return status 200 ?: No')
+    expiration_check = check_domain_expiration_date(domain, cnt_days)
+    if expiration_check is True:
+        print('If domain prepaid for the next month?: Yes')
+    elif expiration_check in (False, None):
+        print('If domain prepaid for the next month?: No')
+
+
 if __name__ == '__main__':
     try:
         file_with_domains = sys.argv[1]
         list_with_domains = load_urls4check(file_with_domains)
+        cnt_days = 30
         for domain in list_with_domains:
-            print('-'*40)
-            print('Web site: {}'.format(domain))
-            respond_check = is_server_respond_with_200(domain)
-            if respond_check is True:
-                print('Is server return status 200 ?: Yes')
-            elif respond_check in (False, None):
-                print('Is server return status 200 ?: No')
-            expiration_check = check_domain_expiration_date(domain, 30)
-            if expiration_check is True:
-                print('If domain prepaid for the next month?: Yes')
-            elif expiration_check in (False, None):
-                print('If domain prepaid for the next month?: No')
+            print_to_console(domain)
         print('\n')
     except (FileNotFoundError, IndexError):
         print('Please specify or check your file with sites')
