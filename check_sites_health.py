@@ -10,8 +10,9 @@ def load_urls4check(path):
 
 
 def is_server_respond_with_200(url):
+    status = 200
     try:
-        return requests.request('GET', url).status_code == 200
+        return requests.request('GET', url).status_code is status
     except requests.exceptions.ConnectionError:
         return None
 
