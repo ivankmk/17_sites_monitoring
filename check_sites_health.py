@@ -6,44 +6,39 @@ import sys
 
 def load_urls4check(path):
     with open(path, mode='r') as file:
-        return [site.strip() for site in file]
+        return [domain.strip() for domain in file]
 
 
 def is_server_respond_with_200(url):
     try:
-        if requests.request('GET', url).status_code == requests.codes['ok']:
-            return True
-        else:
-            return False
+        return requests.request('GET', url).status_code == requests.codes['ok']
     except requests.exceptions.ConnectionError:
         return None
 
 
-def check_domain_expiration_date(domain_name, day_number):
-    month_ahead = datetime.now() + timedelta(days=day_number)
+def check_domain_expiration_date(domain_name, days_number):
+    days_ahead = datetime.now() + timedelta(days=days_number)
     date = whois.whois(domain_name).expiration_date
     if date is None:
         return None
     elif type(date) == list:
-        if date[0] > month_ahead:
+        if date[0] > days_ahead:
             return True
     else:
-        if date <= month_ahead:
+        if date <= days_ahead:
             return False
 
 
-def print_to_console(domain, cnt_days):
+def print_to_console(domain, cnt_days, respond_check, expiration_check):
     print('-'*40)
     print('Web site: {}'.format(domain))
-    respond_check = is_server_respond_with_200(domain)
-    if respond_check is True:
+    if respond_check:
         print('Is server return status 200 ?: Yes')
-    elif respond_check in (False, None):
+    else:
         print('Is server return status 200 ?: No')
-    expiration_check = check_domain_expiration_date(domain, cnt_days)
-    if expiration_check is True:
+    if expiration_check:
         print('If domain prepaid for the next month?: Yes')
-    elif expiration_check in (False, None):
+    else:
         print('If domain prepaid for the next month?: No')
 
 
@@ -53,7 +48,9 @@ if __name__ == '__main__':
         list_with_domains = load_urls4check(file_with_domains)
         cnt_days = 30
         for domain in list_with_domains:
-            print_to_console(domain, cnt_days)
+            respond_check = is_server_respond_with_200(domain)
+            expiration_check = check_domain_expiration_date(domain, cnt_days)
+            print_to_console(domain, cnt_days, respond_check, expiration_check)
         print('\n')
     except (FileNotFoundError, IndexError):
         print('Please specify or check your file with sites')
