@@ -11,7 +11,7 @@ def load_urls4check(path):
 
 def is_server_respond_with_200(url):
     try:
-        return requests.request('GET', url).status_code == requests.codes['ok']
+        return requests.request('GET', url).status_code == 200
     except requests.exceptions.ConnectionError:
         return None
 
@@ -29,28 +29,33 @@ def check_domain_expiration_date(domain_name, days_number):
             return False
 
 
-def print_to_console(domain, cnt_days, respond_check, expiration_check):
+def print_to_console(domain, days_count, respond_check, expiration_check):
     print('-'*40)
     print('Web site: {}'.format(domain))
     if respond_check:
-        print('Is server return status 200 ?: Yes')
+        status = 'Yes'
     else:
-        print('Is server return status 200 ?: No')
+        status = 'No'
+    print('Is server return status 200 ?: {}'.format(status))
+
     if expiration_check:
-        print('If domain prepaid for the next month?: Yes')
+        status = 'Yes'
     else:
-        print('If domain prepaid for the next month?: No')
+        status = 'No'
+    print('If domain prepaid for the next month?: {}'.format(status))
 
 
 if __name__ == '__main__':
     try:
         file_with_domains = sys.argv[1]
         list_with_domains = load_urls4check(file_with_domains)
-        cnt_days = 30
+        days_count = 30
         for domain in list_with_domains:
             respond_check = is_server_respond_with_200(domain)
-            expiration_check = check_domain_expiration_date(domain, cnt_days)
-            print_to_console(domain, cnt_days, respond_check, expiration_check)
+            expiration_check = check_domain_expiration_date(domain, days_count)
+            print_to_console(
+                    domain, days_count, respond_check, expiration_check
+                    )
         print('\n')
     except (FileNotFoundError, IndexError):
         print('Please specify or check your file with sites')
