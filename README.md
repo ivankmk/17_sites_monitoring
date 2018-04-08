@@ -27,8 +27,8 @@ Is server return status 200 ?: Yes
 If domain prepaid for the next month?: Yes
 ----------------------------------------
 Web site: http://le23524nta.ru
-Is server return status 200 ?: Site not exist
-If domain prepaid for the next month?: Site not exist
+Is server return status 200 ?: No
+If domain prepaid for the next month?: No
 ```
 
 The same with Windows environment;
