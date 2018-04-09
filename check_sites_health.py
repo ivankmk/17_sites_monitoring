@@ -50,6 +50,6 @@ if __name__ == '__main__':
         respond_check = is_server_respond_with_ok(domain)
         expiration_check = check_domain_expiration_date(domain, days_count)
         print_to_console(
-                domain, days_count, respond_check, expiration_check
-                )
+            domain, days_count, respond_check, expiration_check
+            )
     print('\n')
